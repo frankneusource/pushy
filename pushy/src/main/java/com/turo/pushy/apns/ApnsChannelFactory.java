@@ -84,6 +84,18 @@ class ApnsChannelFactory implements PooledObjectFactory<Channel>, Closeable {
         }
     }
 
+    /**
+     * 初始化channelFactory，初始化操作创建ApnsChannelPool对象的时候，实际上是通过这个工厂类完成的操作
+     * @param sslContext
+     * @param signingKey
+     * @param proxyHandlerFactory
+     * @param connectTimeoutMillis
+     * @param idlePingIntervalMillis
+     * @param gracefulShutdownTimeoutMillis
+     * @param frameLogger
+     * @param apnsServerAddress
+     * @param eventLoopGroup
+     */
     ApnsChannelFactory(final SslContext sslContext, final ApnsSigningKey signingKey,
                        final ProxyHandlerFactory proxyHandlerFactory, final int connectTimeoutMillis,
                        final long idlePingIntervalMillis, final long gracefulShutdownTimeoutMillis,
@@ -169,13 +181,7 @@ class ApnsChannelFactory implements PooledObjectFactory<Channel>, Closeable {
     }
 
     /**
-     * Creates and connects a new channel. The initial connection attempt may be delayed to accommodate exponential
-     * back-off requirements.
-     *
-     * @param channelReadyPromise the promise to be notified when a channel has been created and connected to the APNs
-     * server
-     *
-     * @return a future that will be notified once a channel has been created and connected to the APNs server
+     * 方法创建一个新的channel，传入的Promise对象，在channel创建成功的时候会收到通知，进而执行绑定在promise中的listener对象
      */
     @Override
     public Future<Channel> create(final Promise<Channel> channelReadyPromise) {

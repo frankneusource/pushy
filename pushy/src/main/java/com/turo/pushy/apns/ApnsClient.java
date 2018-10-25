@@ -172,27 +172,11 @@ public class ApnsClient {
     }
 
     /**
-     * <p>Sends a push notification to the APNs gateway.</p>
-     *
-     * <p>This method returns a {@code Future} that indicates whether the notification was accepted or rejected by the
-     * gateway. If the notification was accepted, it may be delivered to its destination device at some time in the
-     * future, but final delivery is not guaranteed. Rejections should be considered permanent failures, and callers
-     * should <em>not</em> attempt to re-send the notification.</p>
-     *
-     * <p>The returned {@code Future} may fail with an exception if the notification could not be sent. Failures to
-     * <em>send</em> a notification to the gateway—i.e. those that fail with exceptions—should generally be considered
-     * non-permanent, and callers should attempt to re-send the notification when the underlying problem has been
-     * resolved.</p>
-     *
+     * 向APNS推送网关发送推送请求，返回Future对象，结果为推送发送结果
      * @param notification the notification to send to the APNs gateway
-     *
      * @param <T> the type of notification to be sent
-     *
-     * @return a {@code Future} that will complete when the notification has been either accepted or rejected by the
-     * APNs gateway
-     *
+     * @return a {@code Future}
      * @see com.turo.pushy.apns.util.concurrent.PushNotificationResponseListener
-     *
      * @since 0.8
      */
     @SuppressWarnings("unchecked")
