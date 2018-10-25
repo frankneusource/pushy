@@ -105,16 +105,11 @@ class ApnsChannelPool {
     }
 
     /**
-     * <p>Asynchronously acquires a channel from this channel pool. The acquired channel may be a pre-existing channel
-     * stored in the pool or may be a new channel created on demand. If no channels are available and the pool is at
-     * capacity, acquisition may be delayed until another caller releases a channel to the pool.</p>
-     *
-     * <p>When callers are done with a channel, they <em>must</em> release the channel back to the pool via the
-     * {@link ApnsChannelPool#release(Channel)} method.</p>
-     *
-     * @return a {@code Future} that will be notified when a channel is available
-     *
-     * @see ApnsChannelPool#release(Channel)
+     * 异步从channel池获取channel，这个channel可能是之前存储在channel池中的，也有可能是新创建的。如果channel池中没有可用的channel，则会等待有channel被归还到channel池中
+     * channel数据读取完毕，必须调用下述方法释放channel
+     * {@link ApnsChannelPool#release(Channel)}
+     * 归还channel池会通知有channel可用，将等待队列中的一个线程拉起
+     * {@link ApnsChannelPool#handleNextAcquisition()}
      */
     Future<Channel> acquire() {
         final Promise<Channel> acquirePromise = new DefaultPromise<>(this.executor);
@@ -140,6 +135,11 @@ class ApnsChannelPool {
         return acquirePromise;
     }
 
+    /**
+     * 获取channel, 受限检查channel容器大小，在没有到达上限的时候总是优先创建新channel，创建过程也是异步的，创建成功后把请求创建的Future从队列中移除
+     * 如果达到上线，则将尝试从idleChannels中获取空闲channel，如果获取失败，则将这次任务请求暂存到pendingAcquisitionPromises中
+     * @param acquirePromise
+     */
     private void acquireWithinEventExecutor(final Promise<Channel> acquirePromise) {
         assert this.executor.inEventLoop();
 

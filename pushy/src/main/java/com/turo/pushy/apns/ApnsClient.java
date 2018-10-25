@@ -204,7 +204,7 @@ public class ApnsClient {
                     new PushNotificationPromise<>(this.eventLoopGroup.next(), notification);
 
             final long notificationId = this.nextNotificationId.getAndIncrement();
-
+            //向封装netty的OrderedEventExecutor中注册监听器，默认是NioEventLoopGroup，通过ApnsClientBuilder中build()实现，为Future添加监听的时候，非原生线程的时候提交了一个AIO请求
             this.channelPool.acquire().addListener(new GenericFutureListener<Future<Channel>>() {
                 @Override
                 public void operationComplete(final Future<Channel> acquireFuture) throws Exception {
