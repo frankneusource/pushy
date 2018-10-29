@@ -112,8 +112,11 @@ class ApnsChannelFactory implements PooledObjectFactory<Channel>, Closeable {
                 new RoundRobinDnsAddressResolverGroup(ClientChannelClassUtil.getDatagramChannelClass(eventLoopGroup),
                         DefaultDnsServerAddressStreamProvider.INSTANCE) : NoopAddressResolverGroup.INSTANCE;
 
+        //netty 客户端启动脚手架
         this.bootstrapTemplate = new Bootstrap();
+        //监听线程和事件处理线程都是用的一个线程池
         this.bootstrapTemplate.group(eventLoopGroup);
+        //禁用Nagle算法
         this.bootstrapTemplate.option(ChannelOption.TCP_NODELAY, true);
         this.bootstrapTemplate.remoteAddress(apnsServerAddress);
         this.bootstrapTemplate.resolver(this.addressResolverGroup);

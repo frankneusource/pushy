@@ -190,10 +190,8 @@ class ApnsClientHandler extends Http2ConnectionHandler implements Http2FrameList
         final int streamId = this.connection().local().incrementAndGetNextStreamId();
 
         if (streamId > 0) {
-            // We'll attach the push notification and response promise to the stream as soon as the stream is created.
-            // Because we're using a StreamBufferingEncoder under the hood, there's no guarantee as to when the stream
-            // will actually be created, and so we attach these in the onStreamAdded listener to make sure everything
-            // is happening in a predictable order.
+            // 将传入的promise与流绑定，这样使得流处理完成的时候会进行回调。
+            // 由于使用StreamBufferingEncoder，不能确定什么时候才会真正的创建流，因此提前在此处进行关系绑定
             this.unattachedResponsePromisesByStreamId.put(streamId, responsePromise);
             final ApnsPushNotification pushNotification = responsePromise.getPushNotification();
 
