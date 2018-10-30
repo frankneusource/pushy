@@ -58,9 +58,11 @@ class ApnsChannelPool {
     private final ApnsChannelPoolMetricsListener metricsListener;
 
     private final ChannelGroup allChannels;
+    //空闲channel
     private final Queue<Channel> idleChannels = new ArrayDeque<>();
-
+    //等待创建channel的创建结果future，等待连接成功
     private final Set<Future<Channel>> pendingCreateChannelFutures = new HashSet<>();
+    //没有空闲连接等待资源是否得任务列表，等待有连接释放出来
     private final Queue<Promise<Channel>> pendingAcquisitionPromises = new ArrayDeque<>();
 
     private boolean isClosed = false;
@@ -187,8 +189,7 @@ class ApnsChannelPool {
                         this.acquireWithinEventExecutor(acquirePromise);
                     }
                 } else {
-                    // We don't have any connections ready to go, and don't have any more capacity to create new
-                    // channels. Add this acquisition to the queue waiting for channels to become available.
+                    // 没有空闲的连接可用，而且也达到了配置的连接数上线，则把任务放到这个队列中
                     pendingAcquisitionPromises.add(acquirePromise);
                 }
             }
