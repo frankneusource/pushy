@@ -515,7 +515,7 @@ public class ApnsClientBuilder {
         final SslContext sslContext;
         {
             final SslProvider sslProvider;
-
+			//在OpenSSL提供支持的情况下，优先使用OpenSSL
             if (OpenSsl.isAvailable()) {
                 log.info("Native SSL provider is available; will use native provider.");
                 sslProvider = SslProvider.OPENSSL_REFCNT;
